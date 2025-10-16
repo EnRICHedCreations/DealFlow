@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Deal Sheet Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* Custom print styles to ensure the deal sheet looks clean when exported as PDF */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+            /* Hide non-essential elements for printing */
+            .print\:hidden,
+            .print\:hidden * {
+                display: none !important;
+            }
+            /* Ensure the deal sheet content takes up the full printable area */
+            #deal-sheet {
+                margin: 0;
+                padding: 0;
+                min-height: auto;
+                box-shadow: none;
+            }
+            .max-w-5xl.mx-auto {
+                max-width: 100%;
+                margin: 0 auto;
+                padding: 0 1rem; /* Add some padding for better margin */
+            }
+            /* Reset header colors for printing */
+            #deal-sheet > div:first-child {
+                background: #f1f5f9 !important; /* Light background for header in print */
+                color: #1e293b !important;
+            }
+            #deal-sheet > div:first-child h1 {
+                color: #1e293b !important;
+            }
+            #deal-sheet > div:first-child p {
+                color: #475569 !important;
+            }
+            .text-emerald-400 {
+                color: #059669 !important; /* Keep emerald color for asking price */
+            }
+            /* Ensure image is not too large in print */
+            .h-96 {
+                height: 300px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Import Lucide icons manually since we can't use node_modules imports
+        const { Home, DollarSign, MapPin, TrendingUp, Phone, Mail, FileDown, Eye, Edit2, Camera } = ({ size, className }) => {
+            // A simple placeholder implementation for the icons
+            const styles = { width: size || 24, height: size || 24, display: 'inline-block', strokeWidth: 2, stroke: 'currentColor', fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' };
+            const iconMap = {
+                Home: <svg {...styles} className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+                DollarSign: <svg {...styles} className={className}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+                MapPin: <svg {...styles} className={className}><path d="M12 19.5v.5"/><path d="M12 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M19.5 12A7.5 7.5 0 0 1 12 19.5"/><path d="M4.5 12a7.5 7.5 0 0 1 7.5-7.5"/><path d="M12 4.5a7.5 7.5 0 0 1 7.5 7.5"/><path d="M4.5 12a7.5 7.5 0 0 0 7.5 7.5"/></svg>,
+                TrendingUp: <svg {...styles} className={className}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+                Phone: <svg {...styles} className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6.73-6.73 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.09 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+                Mail: <svg {...styles} className={className}><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.83 1.83 0 0 1-2.06 0L2 7"/></svg>,
+                FileDown: <svg {...styles} className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18V12"/><path d="m9 15 3 3 3-3"/></svg>,
+                Eye: <svg {...styles} className={className}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+                Edit2: <svg {...styles} className={className}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
+                Camera: <svg {...styles} className={className}><path d="M14.5 4h-3L9 2H5C3.34 2 2 3.34 2 5v14c0 1.66 1.34 3 3 3h14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3h-4.5L14.5 4z"/><circle cx="12" cy="13" r="3"/></svg>
+            };
+            return iconMap[className];
+        };
+
+        const { useState } = React;
+
+        function DealSheetGenerator() {
+            const [step, setStep] = useState('input'); // 'input' or 'preview'
+            const [dealData, setDealData] = useState({
+                // Property Info
+                address: '123 Main St',
+                city: 'Anytown',
+                state: 'CA',
+                zip: '90210',
+                propertyType: 'Single Family',
+                beds: '3',
+                baths: '2.5',
+                sqft: '1800',
+                lotSize: '7500 sq ft',
+                yearBuilt: '1975',
+                
+                // Financial Info
+                arv: '400000',
+                askingPrice: '250000',
+                repairEstimate: '50000',
+                wholesaleFee: '10000',
+                
+                // Additional Details
+                description: 'Great fix-and-flip or buy-and-hold opportunity in a rapidly appreciating neighborhood. Property needs a full cosmetic renovation, including kitchen, baths, and flooring. Roof is 10 years old. Excellent comps in the area support the ARV. Cash buyers only. Fast close preferred.',
+                highlights: '• Excellent location near the park\n• Spacious two-car garage\n• New HVAC system (2020)\n• Low taxes area',
+                propertyCondition: 'Distressed',
+                occupancy: 'Vacant',
+                
+                // Your Contact Info
+                wholesalerName: 'Jane Doe',
+                wholesalerCompany: 'Fast Cash Deals LLC',
+                wholesalerPhone: '(555) 123-4567',
+                wholesalerEmail: 'jane.doe@example.com',
+                
+                // Property Image URL
+                imageUrl: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200'
+            });
+
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setDealData(prev => ({ ...prev, [name]: value }));
+            };
+
+            const formatCurrency = (num) => {
+                const number = parseFloat(num) || 0;
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0
+                }).format(number);
+            };
+
+            const getTotalInvestment = () => {
+                const asking = parseFloat(dealData.askingPrice) || 0;
+                const repairs = parseFloat(dealData.repairEstimate) || 0;
+                const fee = parseFloat(dealData.wholesaleFee) || 0;
+                return asking + repairs + fee;
+            };
+
+            const calculateProfit = () => {
+                const arv = parseFloat(dealData.arv) || 0;
+                return arv - getTotalInvestment();
+            };
+
+            const calculateROI = () => {
+                const arv = parseFloat(dealData.arv) || 0;
+                const totalInvestment = getTotalInvestment();
+                
+                if (totalInvestment === 0) return 0;
+                const profit = arv - totalInvestment;
+                return ((profit / totalInvestment) * 100).toFixed(1);
+            };
+
+            const handleExport = () => {
+                window.print();
+            };
+
+            const DealSheetPreview = () => (
+                <div id="deal-sheet" className="bg-white min-h-screen">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8">
+                        <div className="max-w-5xl mx-auto">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h1 className="text-4xl font-bold mb-2">INVESTMENT OPPORTUNITY</h1>
+                                    <p className="text-xl text-slate-300">{dealData.address || 'Property Address'}</p>
+                                    <p className="text-slate-400">{dealData.city && dealData.state ? `${dealData.city}, ${dealData.state} ${dealData.zip}` : 'City, State ZIP'}</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-sm text-slate-400 mb-1">Asking Price</div>
+                                    <div className="text-3xl font-bold text-emerald-400">{formatCurrency(dealData.askingPrice)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Property Image */}
+                    <div className="max-w-5xl mx-auto -mt-6 px-8">
+                        <img
+                            src={dealData.imageUrl}
+                            alt="Property"
+                            className="w-full h-96 object-cover rounded-xl shadow-2xl"
+                        />
+                    </div>
+
+                    {/* Key Stats */}
+                    <div className="max-w-5xl mx-auto px-8 py-8">
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
+                                <div className="text-3xl font-bold text-slate-900">{dealData.beds || '-'}</div>
+                                <div className="text-sm text-slate-600">Bedrooms</div>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
+                                <div className="text-3xl font-bold text-slate-900">{dealData.baths || '-'}</div>
+                                <div className="text-sm text-slate-600">Bathrooms</div>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
+                                <div className="text-3xl font-bold text-slate-900">{dealData.sqft ? parseInt(dealData.sqft).toLocaleString() : '-'}</div>
+                                <div className="text-sm text-slate-600">Sq Ft</div>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
+                                <div className="text-3xl font-bold text-slate-900">{dealData.yearBuilt || '-'}</div>
+                                <div className="text-sm text-slate-600">Year Built</div>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
+                                <div className="text-3xl font-bold text-slate-900">{dealData.propertyType || '-'}</div>
+                                <div className="text-sm text-slate-600">Type</div>
+                            </div>
+                        </div>
+
+                        {/* Two Column Layout */}
+                        <div className="grid md:grid-cols-2 gap-8">
+                            {/* Left Column */}
+                            <div>
+                                <div className="mb-6">
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Property Details</h2>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                            <span className="text-slate-600">Property Type:</span>
+                                            <span className="font-semibold text-slate-900">{dealData.propertyType}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                            <span className="text-slate-600">Condition:</span>
+                                            <span className="font-semibold text-slate-900">{dealData.propertyCondition}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                            <span className="text-slate-600">Occupancy:</span>
+                                            <span className="font-semibold text-slate-900">{dealData.occupancy}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2 border-b border-slate-200">
+                                            <span className="text-slate-600">Lot Size:</span>
+                                            <span className="font-semibold text-slate-900">{dealData.lotSize || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {dealData.description && (
+                                    <div className="mb-6">
+                                        <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Description</h2>
+                                        <p className="text-slate-700 leading-relaxed">{dealData.description}</p>
+                                    </div>
+                                )}
+
+                                {dealData.highlights && (
+                                    <div className="mb-6">
+                                        <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Key Highlights</h2>
+                                        {/* Use pre-wrap to respect newlines from textarea */}
+                                        <div className="text-slate-700 leading-relaxed whitespace-pre-line">{dealData.highlights}</div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Right Column - Financials */}
+                            <div>
+                                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border-2 border-emerald-200 mb-6">
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-4">Investment Analysis</h2>
+                                    
+                                    <div className="space-y-3 mb-6">
+                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
+                                            <span className="text-slate-700 font-medium">After Repair Value (ARV)</span>
+                                            <span className="text-xl font-bold text-emerald-700">{formatCurrency(dealData.arv)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
+                                            <span className="text-slate-700 font-medium">Asking Price</span>
+                                            <span className="text-xl font-bold text-slate-900">{formatCurrency(dealData.askingPrice)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
+                                            <span className="text-slate-700 font-medium">Estimated Repairs</span>
+                                            <span className="text-xl font-bold text-orange-600">{formatCurrency(dealData.repairEstimate)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
+                                            <span className="text-slate-700 font-medium">Assignment Fee</span>
+                                            <span className="text-xl font-bold text-blue-600">{formatCurrency(dealData.wholesaleFee)}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-lg border-2 border-emerald-300 mb-4">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-slate-700 font-bold">Total Investment</span>
+                                            <span className="text-2xl font-bold text-slate-900">{formatCurrency(getTotalInvestment())}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-slate-700 font-bold">Potential Profit</span>
+                                            <span className="text-2xl font-bold text-emerald-600">{formatCurrency(calculateProfit())}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2 border-t-2 border-emerald-200">
+                                            <span className="text-slate-700 font-bold">Projected ROI</span>
+                                            <span className="text-3xl font-bold text-emerald-600">{calculateROI()}%</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-emerald-600 text-white p-4 rounded-lg text-center">
+                                        <div className="text-sm font-semibold mb-1">Equity After Repairs</div>
+                                        <div className="text-3xl font-bold">{formatCurrency(calculateProfit())}</div>
+                                    </div>
+                                </div>
+
+                                {/* Call to Action */}
+                                <div className="bg-slate-900 text-white p-6 rounded-xl">
+                                    <h3 className="text-xl font-bold mb-4 text-center">Contact for More Information</h3>
+                                    <div className="space-y-3">
+                                        {dealData.wholesalerName && (
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-emerald-500 p-2 rounded-lg">
+                                                    <Home size={20} className="Home" />
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold">{dealData.wholesalerName}</div>
+                                                    {dealData.wholesalerCompany && (
+                                                        <div className="text-sm text-slate-400">{dealData.wholesalerCompany}</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                        {dealData.wholesalerPhone && (
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-blue-500 p-2 rounded-lg">
+                                                    <Phone size={20} className="Phone" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm text-slate-400">Phone</div>
+                                                    <div className="font-semibold">{dealData.wholesalerPhone}</div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {dealData.wholesalerEmail && (
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-purple-500 p-2 rounded-lg">
+                                                    <Mail size={20} className="Mail" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm text-slate-400">Email</div>
+                                                    <div className="font-semibold break-all">{dealData.wholesalerEmail}</div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="mt-8 pt-8 border-t-2 border-slate-200 text-center text-slate-600 text-sm">
+                            <p>This is a wholesale real estate opportunity. All information provided is deemed reliable but not guaranteed.</p>
+                            <p className="mt-2">Property is subject to prior sale. Buyer to verify all information independently.</p>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            if (step === 'preview') {
+                return (
+                    <div>
+                        <div className="bg-slate-900 text-white p-4 print:hidden sticky top-0 z-50 shadow-lg">
+                            <div className="max-w-7xl mx-auto flex justify-between items-center">
+                                <h2 className="text-xl font-bold">Preview Mode</h2>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setStep('input')}
+                                        className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
+                                    >
+                                        <Edit2 size={18} className="Edit2" />
+                                        Edit Deal
+                                    </button>
+                                    <button
+                                        onClick={handleExport}
+                                        className="bg-emerald-600 hover:bg-emerald-700 px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+                                    >
+                                        <FileDown size={18} className="FileDown" />
+                                        Export as PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <DealSheetPreview />
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                    {/* Header */}
+                    <header className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700">
+                        <div className="max-w-4xl mx-auto px-4 py-6">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-3 rounded-xl">
+                                    <Home className="text-white Home" size={28} />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-bold text-white">Deal Sheet Generator</h1>
+                                    <p className="text-slate-400 text-sm">Create professional deal presentations for your buyers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="max-w-4xl mx-auto px-4 py-8">
+                        <div className="bg-slate-800 rounded-2xl p-8 border border-slate-700 shadow-2xl">
+                            
+                            {/* Property Information */}
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <MapPin className="text-emerald-500 MapPin" />
+                                    Property Information
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        placeholder="Street Address *"
+                                        value={dealData.address}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none md:col-span-2"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="city"
+                                        placeholder="City *"
+                                        value={dealData.city}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="state"
+                                        placeholder="State *"
+                                        value={dealData.state}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="zip"
+                                        placeholder="ZIP Code"
+                                        value={dealData.zip}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <select
+                                        name="propertyType"
+                                        value={dealData.propertyType}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    >
+                                        <option>Single Family</option>
+                                        <option>Multi-Family</option>
+                                        <option>Condo</option>
+                                        <option>Townhouse</option>
+                                        <option>Land</option>
+                                        <option>Commercial</option>
+                                    </select>
+                                    <input
+                                        type="number"
+                                        name="beds"
+                                        placeholder="Bedrooms *"
+                                        value={dealData.beds}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="baths"
+                                        placeholder="Bathrooms *"
+                                        value={dealData.baths}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="sqft"
+                                        placeholder="Square Feet *"
+                                        value={dealData.sqft}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="lotSize"
+                                        placeholder="Lot Size (e.g., 0.25 acres)"
+                                        value={dealData.lotSize}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="yearBuilt"
+                                        placeholder="Year Built"
+                                        value={dealData.yearBuilt}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <select
+                                        name="propertyCondition"
+                                        value={dealData.propertyCondition}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    >
+                                        <option>Excellent</option>
+                                        <option>Good</option>
+                                        <option>Fair</option>
+                                        <option>Poor</option>
+                                        <option>Distressed</option>
+                                    </select>
+                                    <select
+                                        name="occupancy"
+                                        value={dealData.occupancy}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    >
+                                        <option>Vacant</option>
+                                        <option>Owner Occupied</option>
+                                        <option>Tenant Occupied</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Financial Information */}
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <DollarSign className="text-emerald-500 DollarSign" />
+                                    Financial Details
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input
+                                        type="number"
+                                        name="arv"
+                                        placeholder="After Repair Value (ARV) *"
+                                        value={dealData.arv}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="askingPrice"
+                                        placeholder="Asking Price *"
+                                        value={dealData.askingPrice}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="repairEstimate"
+                                        placeholder="Estimated Repairs *"
+                                        value={dealData.repairEstimate}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="number"
+                                        name="wholesaleFee"
+                                        placeholder="Assignment/Wholesale Fee *"
+                                        value={dealData.wholesaleFee}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                </div>
+
+                                {/* Quick ROI Preview */}
+                                {(dealData.arv && dealData.askingPrice) && (
+                                    <div className="mt-4 bg-slate-700/50 border border-emerald-500/30 rounded-lg p-4">
+                                        <div className="grid grid-cols-3 gap-4 text-center">
+                                            <div>
+                                                <div className="text-slate-400 text-sm mb-1">Total Investment</div>
+                                                <div className="text-white font-bold text-lg">{formatCurrency(getTotalInvestment())}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-slate-400 text-sm mb-1">Potential Profit</div>
+                                                <div className="text-emerald-400 font-bold text-lg">{formatCurrency(calculateProfit())}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-slate-400 text-sm mb-1">ROI</div>
+                                                <div className="text-emerald-400 font-bold text-lg flex items-center justify-center gap-1">
+                                                    <TrendingUp size={18} className="TrendingUp" />
+                                                    {calculateROI()}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Property Description */}
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-white mb-4">Property Description & Highlights</h2>
+                                <textarea
+                                    name="description"
+                                    placeholder="Describe the property, neighborhood, potential, etc..."
+                                    value={dealData.description}
+                                    onChange={handleChange}
+                                    rows="4"
+                                    className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none w-full mb-4"
+                                />
+                                <textarea
+                                    name="highlights"
+                                    placeholder="Key highlights (one per line)&#10;• Recently updated kitchen&#10;• Large backyard&#10;• Near schools and shopping"
+                                    value={dealData.highlights}
+                                    onChange={handleChange}
+                                    rows="4"
+                                    className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none w-full"
+                                />
+                            </div>
+
+                            {/* Property Image */}
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                                    <Camera className="text-emerald-500 Camera" />
+                                    Property Image
+                                </h2>
+                                <input
+                                    type="text"
+                                    name="imageUrl"
+                                    placeholder="Property image URL (or use default)"
+                                    value={dealData.imageUrl}
+                                    onChange={handleChange}
+                                    className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none w-full mb-3"
+                                />
+                                <div className="bg-slate-700/30 rounded-lg p-4">
+                                    <img src={dealData.imageUrl} alt="Property preview" className="w-full h-48 object-cover rounded-lg" />
+                                </div>
+                            </div>
+
+                            {/* Your Contact Info */}
+                            <div className="mb-8">
+                                <h2 className="text-2xl font-bold text-white mb-4">Your Contact Information</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input
+                                        type="text"
+                                        name="wholesalerName"
+                                        placeholder="Your Name *"
+                                        value={dealData.wholesalerName}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="wholesalerCompany"
+                                        placeholder="Company Name (optional)"
+                                        value={dealData.wholesalerCompany}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="tel"
+                                        name="wholesalerPhone"
+                                        placeholder="Phone Number *"
+                                        value={dealData.wholesalerPhone}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                    <input
+                                        type="email"
+                                        name="wholesalerEmail"
+                                        placeholder="Email Address *"
+                                        value={dealData.wholesalerEmail}
+                                        onChange={handleChange}
+                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Generate Button */}
+                            <button
+                                onClick={() => setStep('preview')}
+                                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-lg"
+                            >
+                                <Eye size={24} className="Eye" />
+                                Preview Deal Sheet
+                            </button>
+                        </div>
+
+                        {/* Instructions */}
+                        <div className="mt-8 bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                            <h3 className="text-xl font-bold text-white mb-3">How to Use:</h3>
+                            <ol className="text-slate-300 space-y-2 list-decimal list-inside">
+                                <li>Fill in your property and financial details above</li>
+                                <li>Click "Preview Deal Sheet" to see your professional presentation</li>
+                                <li>Click "**Export as PDF**" (uses your browser's print-to-PDF function) to save or print your deal sheet</li>
+                                <li>Share the PDF with your buyer's list via email or messaging</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DealSheetGenerator />);
+    </script>
+</body>
+</html>
