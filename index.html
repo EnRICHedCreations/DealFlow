@@ -12,176 +12,244 @@
     <style>
         @media print {
             @page {
-                margin: 0.5in;
-                size: letter;
+                margin: 0.4in;
+                size: letter portrait;
             }
-            
+
             body {
                 margin: 0;
                 padding: 0;
                 background: white !important;
-                font-size: 10pt !important;
+                font-size: 9pt !important;
+                line-height: 1.3 !important;
             }
-            
+
             .print\:hidden,
             .print\:hidden * {
                 display: none !important;
             }
-            
+
             #deal-sheet {
                 margin: 0;
                 padding: 0;
                 min-height: auto;
                 box-shadow: none;
             }
-            
+
             .max-w-5xl {
                 max-width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
-            
-            /* Compact header */
+
+            /* Ultra-compact header */
             #deal-sheet > div:first-child {
-                background: #f1f5f9 !important;
-                color: #1e293b !important;
-                padding: 1rem !important;
-            }
-            
-            #deal-sheet > div:first-child h1 {
-                color: #1e293b !important;
-                font-size: 1.75rem !important;
-                margin-bottom: 0.25rem !important;
-            }
-            
-            #deal-sheet > div:first-child p {
-                color: #475569 !important;
-                font-size: 0.875rem !important;
-            }
-            
-            /* Compact property image */
-            .h-96 {
-                height: 180px !important;
-                margin-top: 0.5rem !important;
-            }
-            
-            /* Compact spacing throughout */
-            .px-8 {
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
-            }
-            
-            .py-8 {
-                padding-top: 0.75rem !important;
-                padding-bottom: 0.75rem !important;
-            }
-            
-            .mb-8, .mt-8 {
-                margin-bottom: 0.75rem !important;
-                margin-top: 0.75rem !important;
-            }
-            
-            .mb-6 {
-                margin-bottom: 0.5rem !important;
-            }
-            
-            .mb-4 {
-                margin-bottom: 0.375rem !important;
-            }
-            
-            .gap-8 {
-                gap: 0.75rem !important;
-            }
-            
-            .gap-4 {
-                gap: 0.375rem !important;
-            }
-            
-            .p-8, .p-6 {
+                background: #1e3a8a !important;
+                color: white !important;
                 padding: 0.5rem !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
-            
-            .p-4 {
-                padding: 0.375rem !important;
-            }
-            
-            .py-3 {
-                padding-top: 0.25rem !important;
-                padding-bottom: 0.25rem !important;
-            }
-            
-            /* Compact text sizes */
-            .text-4xl {
-                font-size: 1.75rem !important;
-            }
-            
-            .text-3xl {
-                font-size: 1.5rem !important;
-            }
-            
-            .text-2xl {
+
+            #deal-sheet > div:first-child h1 {
+                color: white !important;
                 font-size: 1.25rem !important;
+                margin-bottom: 0.1rem !important;
+                font-weight: 700 !important;
             }
-            
+
+            #deal-sheet > div:first-child p {
+                color: #dbeafe !important;
+                font-size: 0.75rem !important;
+                margin: 0 !important;
+            }
+
+            /* Very compact property image */
+            .h-96 {
+                height: 140px !important;
+                margin-top: 0.25rem !important;
+            }
+
+            /* Ultra-compact spacing */
+            .px-8 {
+                padding-left: 0.4rem !important;
+                padding-right: 0.4rem !important;
+            }
+
+            .py-8 {
+                padding-top: 0.4rem !important;
+                padding-bottom: 0.4rem !important;
+            }
+
+            .mb-8, .mt-8, .-mt-6 {
+                margin-bottom: 0.4rem !important;
+                margin-top: 0.4rem !important;
+            }
+
+            .mb-6 {
+                margin-bottom: 0.3rem !important;
+            }
+
+            .mb-4, .mb-2, .mb-1 {
+                margin-bottom: 0.2rem !important;
+            }
+
+            .gap-8 {
+                gap: 0.4rem !important;
+            }
+
+            .gap-4, .gap-3, .gap-2 {
+                gap: 0.25rem !important;
+            }
+
+            .p-8, .p-6 {
+                padding: 0.35rem !important;
+            }
+
+            .p-4 {
+                padding: 0.25rem !important;
+            }
+
+            .py-3, .py-2 {
+                padding-top: 0.15rem !important;
+                padding-bottom: 0.15rem !important;
+            }
+
+            /* Very compact text sizes */
+            .text-4xl {
+                font-size: 1.25rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .text-3xl {
+                font-size: 1.1rem !important;
+                line-height: 1.2 !important;
+            }
+
+            .text-2xl {
+                font-size: 0.95rem !important;
+                line-height: 1.2 !important;
+            }
+
             .text-xl {
-                font-size: 1rem !important;
+                font-size: 0.85rem !important;
+                line-height: 1.2 !important;
             }
-            
-            /* Keep colors */
-            .text-emerald-400 {
-                color: #059669 !important;
+
+            .text-lg {
+                font-size: 0.8rem !important;
             }
-            
-            .text-emerald-600 {
-                color: #059669 !important;
+
+            .text-sm {
+                font-size: 0.7rem !important;
             }
-            
-            .text-emerald-700 {
-                color: #047857 !important;
+
+            /* Professional color preservation */
+            .text-emerald-400, .text-emerald-600, .text-emerald-700,
+            .text-blue-700, .text-blue-900 {
+                color: #1e3a8a !important;
             }
-            
-            /* Compact stat boxes */
+
+            .text-green-600 {
+                color: #16a34a !important;
+            }
+
+            .bg-emerald-600, .bg-emerald-500,
+            .bg-blue-700, .bg-blue-900 {
+                background-color: #1e3a8a !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .bg-gradient-to-br,
+            .bg-gradient-to-r {
+                background: #eff6ff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .bg-blue-50 {
+                background: #eff6ff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .border-emerald-200, .border-emerald-300,
+            .border-blue-200, .border-blue-300, .border-blue-400,
+            .border-blue-700 {
+                border-color: #93c5fd !important;
+            }
+
+            .bg-slate-900 {
+                background: #1e3a8a !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .text-blue-200, .text-blue-100 {
+                color: #dbeafe !important;
+            }
+
+            .bg-blue-600 {
+                background: #2563eb !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Ultra-compact stat boxes */
             .grid.grid-cols-2.md\:grid-cols-5 > div {
-                padding: 0.375rem !important;
+                padding: 0.25rem !important;
             }
-            
+
             .grid.grid-cols-2.md\:grid-cols-5 > div > div:first-child {
-                font-size: 1.5rem !important;
+                font-size: 1rem !important;
+                line-height: 1.1 !important;
             }
-            
-            /* Ensure two-column layout prints properly */
+
+            .grid.grid-cols-2.md\:grid-cols-5 > div > div:last-child {
+                font-size: 0.65rem !important;
+            }
+
+            /* Two-column layout optimization */
             .grid.md\:grid-cols-2 {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
-                gap: 0.75rem !important;
+                gap: 0.4rem !important;
             }
-            
+
             /* Compact headings */
             h2 {
-                font-size: 1.125rem !important;
-                margin-bottom: 0.375rem !important;
-                padding-bottom: 0.25rem !important;
+                font-size: 0.9rem !important;
+                margin-bottom: 0.2rem !important;
+                padding-bottom: 0.15rem !important;
+                font-weight: 700 !important;
             }
-            
+
             h3 {
-                font-size: 1rem !important;
-                margin-bottom: 0.375rem !important;
+                font-size: 0.85rem !important;
+                margin-bottom: 0.2rem !important;
             }
-            
-            /* Compact footer */
+
+            /* Minimal footer */
             .border-t-2 {
-                margin-top: 0.5rem !important;
-                padding-top: 0.5rem !important;
+                margin-top: 0.3rem !important;
+                padding-top: 0.3rem !important;
+                font-size: 0.65rem !important;
             }
-            
-            /* Hide excessive spacing */
+
+            /* Tight spacing */
             .space-y-3 > * + * {
-                margin-top: 0.25rem !important;
+                margin-top: 0.15rem !important;
             }
-            
-            /* Adjust rounded corners for print */
-            .rounded-xl, .rounded-lg {
-                border-radius: 0.375rem !important;
+
+            /* Minimal border radius for print */
+            .rounded-xl, .rounded-lg, .rounded-2xl {
+                border-radius: 0.25rem !important;
+            }
+
+            .shadow-2xl, .shadow-lg {
+                box-shadow: none !important;
             }
         }
     </style>
@@ -208,7 +276,6 @@
                 arv: '',
                 askingPrice: '',
                 repairEstimate: '',
-                wholesaleFee: '',
                 description: '',
                 highlights: '',
                 propertyCondition: 'Distressed',
@@ -237,8 +304,7 @@
             const getTotalInvestment = () => {
                 const asking = parseFloat(dealData.askingPrice) || 0;
                 const repairs = parseFloat(dealData.repairEstimate) || 0;
-                const fee = parseFloat(dealData.wholesaleFee) || 0;
-                return asking + repairs + fee;
+                return asking + repairs;
             };
 
             const calculateProfit = () => {
@@ -261,17 +327,17 @@
 
             const DealSheetPreview = () => (
                 <div id="deal-sheet" className="bg-white min-h-screen">
-                    <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8">
+                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-8">
                         <div className="max-w-5xl mx-auto">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h1 className="text-4xl font-bold mb-2">INVESTMENT OPPORTUNITY</h1>
-                                    <p className="text-xl text-slate-300">{dealData.address || 'Property Address'}</p>
-                                    <p className="text-slate-400">{dealData.city && dealData.state ? `${dealData.city}, ${dealData.state} ${dealData.zip}` : 'City, State ZIP'}</p>
+                                    <h1 className="text-4xl font-bold mb-2 tracking-tight">INVESTMENT OPPORTUNITY</h1>
+                                    <p className="text-xl text-blue-100 font-medium">{dealData.address || 'Property Address'}</p>
+                                    <p className="text-blue-200 text-sm">{dealData.city && dealData.state ? `${dealData.city}, ${dealData.state} ${dealData.zip}` : 'City, State ZIP'}</p>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-sm text-slate-400 mb-1">Asking Price</div>
-                                    <div className="text-3xl font-bold text-emerald-400">{formatCurrency(dealData.askingPrice)}</div>
+                                    <div className="text-sm text-blue-200 mb-1 font-medium">Asking Price</div>
+                                    <div className="text-3xl font-bold text-white">{formatCurrency(dealData.askingPrice)}</div>
                                 </div>
                             </div>
                         </div>
@@ -287,145 +353,141 @@
 
                     <div className="max-w-5xl mx-auto px-8 py-8">
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
-                                <div className="text-3xl font-bold text-slate-900">{dealData.beds || '-'}</div>
-                                <div className="text-sm text-slate-600">Bedrooms</div>
+                            <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-200">
+                                <div className="text-3xl font-bold text-blue-900">{dealData.beds || '-'}</div>
+                                <div className="text-sm text-blue-700 font-medium">Bedrooms</div>
                             </div>
-                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
-                                <div className="text-3xl font-bold text-slate-900">{dealData.baths || '-'}</div>
-                                <div className="text-sm text-slate-600">Bathrooms</div>
+                            <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-200">
+                                <div className="text-3xl font-bold text-blue-900">{dealData.baths || '-'}</div>
+                                <div className="text-sm text-blue-700 font-medium">Bathrooms</div>
                             </div>
-                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
-                                <div className="text-3xl font-bold text-slate-900">{dealData.sqft ? parseInt(dealData.sqft).toLocaleString() : '-'}</div>
-                                <div className="text-sm text-slate-600">Sq Ft</div>
+                            <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-200">
+                                <div className="text-3xl font-bold text-blue-900">{dealData.sqft ? parseInt(dealData.sqft).toLocaleString() : '-'}</div>
+                                <div className="text-sm text-blue-700 font-medium">Sq Ft</div>
                             </div>
-                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
-                                <div className="text-3xl font-bold text-slate-900">{dealData.yearBuilt || '-'}</div>
-                                <div className="text-sm text-slate-600">Year Built</div>
+                            <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-200">
+                                <div className="text-3xl font-bold text-blue-900">{dealData.yearBuilt || '-'}</div>
+                                <div className="text-sm text-blue-700 font-medium">Year Built</div>
                             </div>
-                            <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
-                                <div className="text-3xl font-bold text-slate-900">{dealData.propertyType || '-'}</div>
-                                <div className="text-sm text-slate-600">Type</div>
+                            <div className="bg-blue-50 p-4 rounded-lg text-center border-2 border-blue-200">
+                                <div className="text-3xl font-bold text-blue-900">{dealData.propertyType || '-'}</div>
+                                <div className="text-sm text-blue-700 font-medium">Type</div>
                             </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
                             <div>
                                 <div className="mb-6">
-                                    <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Property Details</h2>
+                                    <h2 className="text-2xl font-bold text-blue-900 mb-4 border-b-2 border-blue-600 pb-2">Property Details</h2>
                                     <div className="space-y-3">
-                                        <div className="flex justify-between py-2 border-b border-slate-200">
-                                            <span className="text-slate-600">Property Type:</span>
-                                            <span className="font-semibold text-slate-900">{dealData.propertyType}</span>
+                                        <div className="flex justify-between py-2 border-b border-gray-200">
+                                            <span className="text-gray-600 font-medium">Property Type:</span>
+                                            <span className="font-semibold text-gray-900">{dealData.propertyType}</span>
                                         </div>
-                                        <div className="flex justify-between py-2 border-b border-slate-200">
-                                            <span className="text-slate-600">Condition:</span>
-                                            <span className="font-semibold text-slate-900">{dealData.propertyCondition}</span>
+                                        <div className="flex justify-between py-2 border-b border-gray-200">
+                                            <span className="text-gray-600 font-medium">Condition:</span>
+                                            <span className="font-semibold text-gray-900">{dealData.propertyCondition}</span>
                                         </div>
-                                        <div className="flex justify-between py-2 border-b border-slate-200">
-                                            <span className="text-slate-600">Occupancy:</span>
-                                            <span className="font-semibold text-slate-900">{dealData.occupancy}</span>
+                                        <div className="flex justify-between py-2 border-b border-gray-200">
+                                            <span className="text-gray-600 font-medium">Occupancy:</span>
+                                            <span className="font-semibold text-gray-900">{dealData.occupancy}</span>
                                         </div>
-                                        <div className="flex justify-between py-2 border-b border-slate-200">
-                                            <span className="text-slate-600">Lot Size:</span>
-                                            <span className="font-semibold text-slate-900">{dealData.lotSize || 'N/A'}</span>
+                                        <div className="flex justify-between py-2 border-b border-gray-200">
+                                            <span className="text-gray-600 font-medium">Lot Size:</span>
+                                            <span className="font-semibold text-gray-900">{dealData.lotSize || 'N/A'}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {dealData.description && (
                                     <div className="mb-6">
-                                        <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Description</h2>
-                                        <p className="text-slate-700 leading-relaxed">{dealData.description}</p>
+                                        <h2 className="text-2xl font-bold text-blue-900 mb-4 border-b-2 border-blue-600 pb-2">Description</h2>
+                                        <p className="text-gray-700 leading-relaxed">{dealData.description}</p>
                                     </div>
                                 )}
 
                                 {dealData.highlights && (
                                     <div className="mb-6">
-                                        <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Key Highlights</h2>
-                                        <div className="text-slate-700 leading-relaxed whitespace-pre-line">{dealData.highlights}</div>
+                                        <h2 className="text-2xl font-bold text-blue-900 mb-4 border-b-2 border-blue-600 pb-2">Key Highlights</h2>
+                                        <div className="text-gray-700 leading-relaxed whitespace-pre-line">{dealData.highlights}</div>
                                     </div>
                                 )}
                             </div>
 
                             <div>
-                                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border-2 border-emerald-200 mb-6">
-                                    <h2 className="text-2xl font-bold text-slate-900 mb-4">Investment Analysis</h2>
-                                    
+                                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border-2 border-blue-300 mb-6">
+                                    <h2 className="text-2xl font-bold text-blue-900 mb-4">Investment Analysis</h2>
+
                                     <div className="space-y-3 mb-6">
-                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
-                                            <span className="text-slate-700 font-medium">After Repair Value (ARV)</span>
-                                            <span className="text-xl font-bold text-emerald-700">{formatCurrency(dealData.arv)}</span>
+                                        <div className="flex justify-between items-center py-3 border-b border-blue-200">
+                                            <span className="text-gray-700 font-medium">After Repair Value (ARV)</span>
+                                            <span className="text-xl font-bold text-blue-700">{formatCurrency(dealData.arv)}</span>
                                         </div>
-                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
-                                            <span className="text-slate-700 font-medium">Asking Price</span>
-                                            <span className="text-xl font-bold text-slate-900">{formatCurrency(dealData.askingPrice)}</span>
+                                        <div className="flex justify-between items-center py-3 border-b border-blue-200">
+                                            <span className="text-gray-700 font-medium">Asking Price</span>
+                                            <span className="text-xl font-bold text-gray-900">{formatCurrency(dealData.askingPrice)}</span>
                                         </div>
-                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
-                                            <span className="text-slate-700 font-medium">Estimated Repairs</span>
+                                        <div className="flex justify-between items-center py-3 border-b border-blue-200">
+                                            <span className="text-gray-700 font-medium">Estimated Repairs</span>
                                             <span className="text-xl font-bold text-orange-600">{formatCurrency(dealData.repairEstimate)}</span>
                                         </div>
-                                        <div className="flex justify-between items-center py-3 border-b border-emerald-200">
-                                            <span className="text-slate-700 font-medium">Assignment Fee</span>
-                                            <span className="text-xl font-bold text-blue-600">{formatCurrency(dealData.wholesaleFee)}</span>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-lg border-2 border-blue-400 mb-4">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-gray-700 font-bold">Total Investment</span>
+                                            <span className="text-2xl font-bold text-gray-900">{formatCurrency(getTotalInvestment())}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-gray-700 font-bold">Potential Profit</span>
+                                            <span className="text-2xl font-bold text-green-600">{formatCurrency(calculateProfit())}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center pt-2 border-t-2 border-blue-200">
+                                            <span className="text-gray-700 font-bold">Projected ROI</span>
+                                            <span className="text-3xl font-bold text-green-600">{calculateROI()}%</span>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white p-4 rounded-lg border-2 border-emerald-300 mb-4">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <span className="text-slate-700 font-bold">Total Investment</span>
-                                            <span className="text-2xl font-bold text-slate-900">{formatCurrency(getTotalInvestment())}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center mb-2">
-                                            <span className="text-slate-700 font-bold">Potential Profit</span>
-                                            <span className="text-2xl font-bold text-emerald-600">{formatCurrency(calculateProfit())}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center pt-2 border-t-2 border-emerald-200">
-                                            <span className="text-slate-700 font-bold">Projected ROI</span>
-                                            <span className="text-3xl font-bold text-emerald-600">{calculateROI()}%</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-emerald-600 text-white p-4 rounded-lg text-center">
+                                    <div className="bg-blue-700 text-white p-4 rounded-lg text-center">
                                         <div className="text-sm font-semibold mb-1">Equity After Repairs</div>
                                         <div className="text-3xl font-bold">{formatCurrency(calculateProfit())}</div>
                                     </div>
                                 </div>
 
-                                <div className="bg-slate-900 text-white p-6 rounded-xl">
-                                    <h3 className="text-xl font-bold mb-4 text-center">Contact for More Information</h3>
+                                <div className="bg-blue-900 text-white p-6 rounded-xl border-2 border-blue-700">
+                                    <h3 className="text-xl font-bold mb-4 text-center">Contact Information</h3>
                                     <div className="space-y-3">
                                         {dealData.wholesalerName && (
                                             <div className="flex items-center gap-3">
-                                                <div className="bg-emerald-500 p-2 rounded-lg">
-                                                    <span className="text-2xl">🏠</span>
+                                                <div className="bg-blue-600 p-2 rounded-lg">
+                                                    <span className="text-2xl">👤</span>
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold">{dealData.wholesalerName}</div>
+                                                    <div className="font-bold text-lg">{dealData.wholesalerName}</div>
                                                     {dealData.wholesalerCompany && (
-                                                        <div className="text-sm text-slate-400">{dealData.wholesalerCompany}</div>
+                                                        <div className="text-sm text-blue-200">{dealData.wholesalerCompany}</div>
                                                     )}
                                                 </div>
                                             </div>
                                         )}
                                         {dealData.wholesalerPhone && (
                                             <div className="flex items-center gap-3">
-                                                <div className="bg-blue-500 p-2 rounded-lg">
+                                                <div className="bg-blue-600 p-2 rounded-lg">
                                                     <span className="text-2xl">📞</span>
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm text-slate-400">Phone</div>
-                                                    <div className="font-semibold">{dealData.wholesalerPhone}</div>
+                                                    <div className="text-sm text-blue-200">Phone</div>
+                                                    <div className="font-semibold text-lg">{dealData.wholesalerPhone}</div>
                                                 </div>
                                             </div>
                                         )}
                                         {dealData.wholesalerEmail && (
                                             <div className="flex items-center gap-3">
-                                                <div className="bg-purple-500 p-2 rounded-lg">
+                                                <div className="bg-blue-600 p-2 rounded-lg">
                                                     <span className="text-2xl">✉️</span>
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm text-slate-400">Email</div>
+                                                    <div className="text-sm text-blue-200">Email</div>
                                                     <div className="font-semibold break-all">{dealData.wholesalerEmail}</div>
                                                 </div>
                                             </div>
@@ -435,8 +497,8 @@
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-8 border-t-2 border-slate-200 text-center text-slate-600 text-sm">
-                            <p>This is a wholesale real estate opportunity. All information provided is deemed reliable but not guaranteed.</p>
+                        <div className="mt-8 pt-8 border-t-2 border-gray-300 text-center text-gray-600 text-sm">
+                            <p className="font-medium">This is a wholesale real estate opportunity. All information provided is deemed reliable but not guaranteed.</p>
                             <p className="mt-2">Property is subject to prior sale. Buyer to verify all information independently.</p>
                         </div>
                     </div>
@@ -630,14 +692,6 @@
                                         name="repairEstimate"
                                         placeholder="Estimated Repairs *"
                                         value={dealData.repairEstimate}
-                                        onChange={handleChange}
-                                        className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
-                                    />
-                                    <input
-                                        type="number"
-                                        name="wholesaleFee"
-                                        placeholder="Assignment/Wholesale Fee *"
-                                        value={dealData.wholesaleFee}
                                         onChange={handleChange}
                                         className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none"
                                     />
