@@ -3,55 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real Estate Deal Sheet Generator</title>
+    <title>DealFlow - Deal Sheet Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* Custom print styles to ensure the deal sheet looks clean when exported as PDF */
         @media print {
+            @page {
+                margin: 0.5in;
+                size: letter;
+            }
+            
             body {
                 margin: 0;
                 padding: 0;
                 background: white !important;
+                font-size: 10pt !important;
             }
-            /* Hide non-essential elements for printing */
+            
             .print\:hidden,
             .print\:hidden * {
                 display: none !important;
             }
-            /* Ensure the deal sheet content takes up the full printable area */
+            
             #deal-sheet {
                 margin: 0;
                 padding: 0;
                 min-height: auto;
                 box-shadow: none;
             }
-            .max-w-5xl.mx-auto {
-                max-width: 100%;
-                margin: 0 auto;
-                padding: 0 1rem; /* Add some padding for better margin */
+            
+            .max-w-5xl {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
-            /* Reset header colors for printing */
+            
+            /* Compact header */
             #deal-sheet > div:first-child {
-                background: #f1f5f9 !important; /* Light background for header in print */
+                background: #f1f5f9 !important;
                 color: #1e293b !important;
+                padding: 1rem !important;
             }
+            
             #deal-sheet > div:first-child h1 {
                 color: #1e293b !important;
+                font-size: 1.75rem !important;
+                margin-bottom: 0.25rem !important;
             }
+            
             #deal-sheet > div:first-child p {
                 color: #475569 !important;
+                font-size: 0.875rem !important;
             }
-            .text-emerald-400 {
-                color: #059669 !important; /* Keep emerald color for asking price */
-            }
-            /* Ensure image is not too large in print */
+            
+            /* Compact property image */
             .h-96 {
-                height: 300px; 
+                height: 180px !important;
+                margin-top: 0.5rem !important;
+            }
+            
+            /* Compact spacing throughout */
+            .px-8 {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .py-8 {
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+            
+            .mb-8, .mt-8 {
+                margin-bottom: 0.75rem !important;
+                margin-top: 0.75rem !important;
+            }
+            
+            .mb-6 {
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .mb-4 {
+                margin-bottom: 0.375rem !important;
+            }
+            
+            .gap-8 {
+                gap: 0.75rem !important;
+            }
+            
+            .gap-4 {
+                gap: 0.375rem !important;
+            }
+            
+            .p-8, .p-6 {
+                padding: 0.5rem !important;
+            }
+            
+            .p-4 {
+                padding: 0.375rem !important;
+            }
+            
+            .py-3 {
+                padding-top: 0.25rem !important;
+                padding-bottom: 0.25rem !important;
+            }
+            
+            /* Compact text sizes */
+            .text-4xl {
+                font-size: 1.75rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-2xl {
+                font-size: 1.25rem !important;
+            }
+            
+            .text-xl {
+                font-size: 1rem !important;
+            }
+            
+            /* Keep colors */
+            .text-emerald-400 {
+                color: #059669 !important;
+            }
+            
+            .text-emerald-600 {
+                color: #059669 !important;
+            }
+            
+            .text-emerald-700 {
+                color: #047857 !important;
+            }
+            
+            /* Compact stat boxes */
+            .grid.grid-cols-2.md\:grid-cols-5 > div {
+                padding: 0.375rem !important;
+            }
+            
+            .grid.grid-cols-2.md\:grid-cols-5 > div > div:first-child {
+                font-size: 1.5rem !important;
+            }
+            
+            /* Ensure two-column layout prints properly */
+            .grid.md\:grid-cols-2 {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 0.75rem !important;
+            }
+            
+            /* Compact headings */
+            h2 {
+                font-size: 1.125rem !important;
+                margin-bottom: 0.375rem !important;
+                padding-bottom: 0.25rem !important;
+            }
+            
+            h3 {
+                font-size: 1rem !important;
+                margin-bottom: 0.375rem !important;
+            }
+            
+            /* Compact footer */
+            .border-t-2 {
+                margin-top: 0.5rem !important;
+                padding-top: 0.5rem !important;
+            }
+            
+            /* Hide excessive spacing */
+            .space-y-3 > * + * {
+                margin-top: 0.25rem !important;
+            }
+            
+            /* Adjust rounded corners for print */
+            .rounded-xl, .rounded-lg {
+                border-radius: 0.375rem !important;
             }
         }
     </style>
@@ -63,39 +193,30 @@
         const { useState } = React;
 
         function DealSheetGenerator() {
-            const [step, setStep] = useState('input'); // 'input' or 'preview'
+            const [step, setStep] = useState('input');
             const [dealData, setDealData] = useState({
-                // Property Info
-                address: '123 Main St',
-                city: 'Anytown',
-                state: 'CA',
-                zip: '90210',
+                address: '',
+                city: '',
+                state: '',
+                zip: '',
                 propertyType: 'Single Family',
-                beds: '3',
-                baths: '2.5',
-                sqft: '1800',
-                lotSize: '7500 sq ft',
-                yearBuilt: '1975',
-                
-                // Financial Info
-                arv: '400000',
-                askingPrice: '250000',
-                repairEstimate: '50000',
-                wholesaleFee: '10000',
-                
-                // Additional Details
-                description: 'Great fix-and-flip or buy-and-hold opportunity in a rapidly appreciating neighborhood. Property needs a full cosmetic renovation, including kitchen, baths, and flooring. Roof is 10 years old. Excellent comps in the area support the ARV. Cash buyers only. Fast close preferred.',
-                highlights: '• Excellent location near the park\n• Spacious two-car garage\n• New HVAC system (2020)\n• Low taxes area',
+                beds: '',
+                baths: '',
+                sqft: '',
+                lotSize: '',
+                yearBuilt: '',
+                arv: '',
+                askingPrice: '',
+                repairEstimate: '',
+                wholesaleFee: '',
+                description: '',
+                highlights: '',
                 propertyCondition: 'Distressed',
                 occupancy: 'Vacant',
-                
-                // Your Contact Info
-                wholesalerName: 'Jane Doe',
-                wholesalerCompany: 'Fast Cash Deals LLC',
-                wholesalerPhone: '(555) 123-4567',
-                wholesalerEmail: 'jane.doe@example.com',
-                
-                // Property Image URL
+                wholesalerName: '',
+                wholesalerCompany: '',
+                wholesalerPhone: '',
+                wholesalerEmail: '',
                 imageUrl: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200'
             });
 
@@ -138,25 +259,8 @@
                 window.print();
             };
 
-            const Icon = ({ name, size = 24, className = "" }) => {
-                const iconRef = React.useRef(null);
-                
-                React.useEffect(() => {
-                    if (iconRef.current && window.lucide) {
-                        const iconElement = window.lucide.createElement(name);
-                        if (iconElement) {
-                            iconRef.current.innerHTML = '';
-                            iconRef.current.appendChild(iconElement);
-                        }
-                    }
-                }, [name]);
-                
-                return <i ref={iconRef} className={className} style={{ width: size, height: size, display: 'inline-block' }}></i>;
-            };
-
             const DealSheetPreview = () => (
                 <div id="deal-sheet" className="bg-white min-h-screen">
-                    {/* Header */}
                     <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8">
                         <div className="max-w-5xl mx-auto">
                             <div className="flex justify-between items-start">
@@ -173,7 +277,6 @@
                         </div>
                     </div>
 
-                    {/* Property Image */}
                     <div className="max-w-5xl mx-auto -mt-6 px-8">
                         <img
                             src={dealData.imageUrl}
@@ -182,7 +285,6 @@
                         />
                     </div>
 
-                    {/* Key Stats */}
                     <div className="max-w-5xl mx-auto px-8 py-8">
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                             <div className="bg-slate-50 p-4 rounded-lg text-center border-2 border-slate-200">
@@ -207,9 +309,7 @@
                             </div>
                         </div>
 
-                        {/* Two Column Layout */}
                         <div className="grid md:grid-cols-2 gap-8">
-                            {/* Left Column */}
                             <div>
                                 <div className="mb-6">
                                     <h2 className="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-emerald-500 pb-2">Property Details</h2>
@@ -248,7 +348,6 @@
                                 )}
                             </div>
 
-                            {/* Right Column - Financials */}
                             <div>
                                 <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border-2 border-emerald-200 mb-6">
                                     <h2 className="text-2xl font-bold text-slate-900 mb-4">Investment Analysis</h2>
@@ -293,14 +392,13 @@
                                     </div>
                                 </div>
 
-                                {/* Call to Action */}
                                 <div className="bg-slate-900 text-white p-6 rounded-xl">
                                     <h3 className="text-xl font-bold mb-4 text-center">Contact for More Information</h3>
                                     <div className="space-y-3">
                                         {dealData.wholesalerName && (
                                             <div className="flex items-center gap-3">
                                                 <div className="bg-emerald-500 p-2 rounded-lg">
-                                                    <Icon name="Home" size={20} />
+                                                    <span className="text-2xl">🏠</span>
                                                 </div>
                                                 <div>
                                                     <div className="font-bold">{dealData.wholesalerName}</div>
@@ -313,7 +411,7 @@
                                         {dealData.wholesalerPhone && (
                                             <div className="flex items-center gap-3">
                                                 <div className="bg-blue-500 p-2 rounded-lg">
-                                                    <Icon name="Phone" size={20} />
+                                                    <span className="text-2xl">📞</span>
                                                 </div>
                                                 <div>
                                                     <div className="text-sm text-slate-400">Phone</div>
@@ -324,7 +422,7 @@
                                         {dealData.wholesalerEmail && (
                                             <div className="flex items-center gap-3">
                                                 <div className="bg-purple-500 p-2 rounded-lg">
-                                                    <Icon name="Mail" size={20} />
+                                                    <span className="text-2xl">✉️</span>
                                                 </div>
                                                 <div>
                                                     <div className="text-sm text-slate-400">Email</div>
@@ -337,7 +435,6 @@
                             </div>
                         </div>
 
-                        {/* Footer */}
                         <div className="mt-8 pt-8 border-t-2 border-slate-200 text-center text-slate-600 text-sm">
                             <p>This is a wholesale real estate opportunity. All information provided is deemed reliable but not guaranteed.</p>
                             <p className="mt-2">Property is subject to prior sale. Buyer to verify all information independently.</p>
@@ -357,15 +454,13 @@
                                         onClick={() => setStep('input')}
                                         className="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg font-semibold flex items-center gap-2"
                                     >
-                                        <Icon name="Edit2" size={18} />
-                                        Edit Deal
+                                        ✏️ Edit Deal
                                     </button>
                                     <button
                                         onClick={handleExport}
                                         className="bg-emerald-600 hover:bg-emerald-700 px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
                                     >
-                                        <Icon name="FileDown" size={18} />
-                                        Export as PDF
+                                        📄 Export as PDF
                                     </button>
                                 </div>
                             </div>
@@ -377,12 +472,11 @@
 
             return (
                 <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-                    {/* Header */}
                     <header className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700">
                         <div className="max-w-4xl mx-auto px-4 py-6">
                             <div className="flex items-center gap-3 mb-2">
-                                <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-3 rounded-xl">
-                                    <Icon name="Home" size={28} className="text-white" />
+                                <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-3 rounded-xl text-4xl">
+                                    🏠
                                 </div>
                                 <div>
                                     <h1 className="text-3xl font-bold text-white">Deal Sheet Generator</h1>
@@ -395,11 +489,9 @@
                     <div className="max-w-4xl mx-auto px-4 py-8">
                         <div className="bg-slate-800 rounded-2xl p-8 border border-slate-700 shadow-2xl">
                             
-                            {/* Property Information */}
                             <div className="mb-8">
                                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Icon name="MapPin" size={24} className="text-emerald-500" />
-                                    Property Information
+                                    📍 Property Information
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <input
@@ -512,11 +604,9 @@
                                 </div>
                             </div>
 
-                            {/* Financial Information */}
                             <div className="mb-8">
                                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Icon name="DollarSign" size={24} className="text-emerald-500" />
-                                    Financial Details
+                                    💰 Financial Details
                                 </h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <input
@@ -553,7 +643,6 @@
                                     />
                                 </div>
 
-                                {/* Quick ROI Preview */}
                                 {(dealData.arv && dealData.askingPrice) && (
                                     <div className="mt-4 bg-slate-700/50 border border-emerald-500/30 rounded-lg p-4">
                                         <div className="grid grid-cols-3 gap-4 text-center">
@@ -568,8 +657,7 @@
                                             <div>
                                                 <div className="text-slate-400 text-sm mb-1">ROI</div>
                                                 <div className="text-emerald-400 font-bold text-lg flex items-center justify-center gap-1">
-                                                    <Icon name="TrendingUp" size={18} />
-                                                    {calculateROI()}%
+                                                    📈 {calculateROI()}%
                                                 </div>
                                             </div>
                                         </div>
@@ -577,7 +665,6 @@
                                 )}
                             </div>
 
-                            {/* Property Description */}
                             <div className="mb-8">
                                 <h2 className="text-2xl font-bold text-white mb-4">Property Description & Highlights</h2>
                                 <textarea
@@ -598,11 +685,9 @@
                                 />
                             </div>
 
-                            {/* Property Image */}
                             <div className="mb-8">
                                 <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-                                    <Icon name="Camera" size={24} className="text-emerald-500" />
-                                    Property Image
+                                    📷 Property Image
                                 </h2>
                                 <input
                                     type="text"
@@ -617,7 +702,6 @@
                                 </div>
                             </div>
 
-                            {/* Your Contact Info */}
                             <div className="mb-8">
                                 <h2 className="text-2xl font-bold text-white mb-4">Your Contact Information</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -656,17 +740,14 @@
                                 </div>
                             </div>
 
-                            {/* Generate Button */}
                             <button
                                 onClick={() => setStep('preview')}
                                 className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all shadow-lg"
                             >
-                                <Icon name="Eye" size={24} />
-                                Preview Deal Sheet
+                                👁️ Preview Deal Sheet
                             </button>
                         </div>
 
-                        {/* Instructions */}
                         <div className="mt-8 bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                             <h3 className="text-xl font-bold text-white mb-3">How to Use:</h3>
                             <ol className="text-slate-300 space-y-2 list-decimal list-inside">
