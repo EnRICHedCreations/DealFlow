@@ -292,6 +292,17 @@
                 setDealData(prev => ({ ...prev, [name]: value }));
             };
 
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setDealData(prev => ({ ...prev, imageUrl: reader.result }));
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
             const formatCurrency = (num) => {
                 const number = parseFloat(num) || 0;
                 return new Intl.NumberFormat('en-US', {
@@ -744,11 +755,9 @@
                                     📷 Property Image
                                 </h2>
                                 <input
-                                    type="text"
-                                    name="imageUrl"
-                                    placeholder="Property image URL (or use default)"
-                                    value={dealData.imageUrl}
-                                    onChange={handleChange}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
                                     className="bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-emerald-500 focus:outline-none w-full mb-3"
                                 />
                                 <div className="bg-slate-700/30 rounded-lg p-4">
